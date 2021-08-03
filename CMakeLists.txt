@@ -5,15 +5,23 @@ if (${MCU_FAMILY} STREQUAL "STM32F1")
         set(CPU "-mcpu=cortex-m3")
         set(FPU "")
         set(FLOAT-ABI "")
+        set(MATH_TYPE ARM_MATH_CM3)
 elseif(${MCU_FAMILY} STREQUAL "STM32F4")
         set(CPU "-mcpu=cortex-m4")
         set(FPU "-mfpu=fpv4-sp-d16" )
         set(FLOAT-ABI "-mfloat-abi=hard")
+        set(HAS_FPU 1)
+
+        set(MATH_TYPE ARM_MATH_CM4)
 elseif(${MCU_FAMILY} STREQUAL "STM32L0")
         set(CPU "-mcpu=cortex-m0plus")
         set(FPU "")
         set(FLOAT-ABI "")
+        set(MATH_TYPE ARM_MATH_CM0PLUS)
+else()
+        message(FATAL_ERROR "Unknown MCU FAMILY:" ${MCU_FAMILY})
 endif()
+
 set(MCU_ ${CPU} -mthumb ${FPU} ${FLOAT-ABI})
 set(MCU ${MCU_} PARENT_SCOPE)
 
@@ -21,20 +29,20 @@ set(MCU ${MCU_} PARENT_SCOPE)
 file(GLOB LINKER_SCRIPT ${STM32CUBE_PATH}/*.ld)
 file(GLOB SETUP_ASM ${STM32CUBE_PATH}/*.s)
 
-# CMISS
-add_library(cmiss INTERFACE)
-target_include_directories(cmiss
+# CMSIS
+add_library(stm32cube_cmsis INTERFACE)
+target_include_directories(stm32cube_cmsis
         INTERFACE
         ${STM32CUBE_PATH}/Drivers/CMSIS/Device/ST/${MCU_FAMILY}xx/Include
         ${STM32CUBE_PATH}/Drivers/CMSIS/Include
         )
-target_compile_options(cmiss INTERFACE ${MCU_})
-target_compile_definitions(cmiss INTERFACE -D${MCU_TYPE})
-add_library(stm32cube::cmiss ALIAS cmiss)
+target_compile_options(stm32cube_cmsis INTERFACE ${MCU_})
+target_compile_definitions(stm32cube_cmsis INTERFACE -D${MCU_TYPE} )
+add_library(stm32cube::cmsis ALIAS stm32cube_cmsis)
 
 # HAL
 add_library(stm32cube_hal)
-target_link_libraries(stm32cube_hal PUBLIC cmiss)
+target_link_libraries(stm32cube_hal PUBLIC stm32cube_cmsis)
 aux_source_directory(${STM32CUBE_PATH}/Drivers/${MCU_FAMILY}xx_HAL_Driver/Src HAL_SOURCES)
 list(FILTER HAL_SOURCES EXCLUDE REGEX  "^.*_template.c$")
 target_sources(stm32cube_hal PRIVATE ${HAL_SOURCES})
@@ -48,7 +56,28 @@ target_compile_definitions(stm32cube_hal PUBLIC -DUSE_HAL_DRIVER)
 add_library(stm32cube::hal ALIAS stm32cube_hal)
 
 
+#CMISS
+## DSP
+if(EXISTS ${STM32CUBE_PATH}/Drivers/CMSIS/DSP)
 
+        add_library(stm32cube_dsp)
+        file(GLOB DSP_SRCS ${STM32CUBE_PATH}/Drivers/CMSIS/DSP/Source/*/*.c )
+        target_sources(stm32cube_dsp PRIVATE ${DSP_SRCS})
+        target_link_libraries(stm32cube_dsp
+                PUBLIC
+                stm32cube_cmsis
+                ${STM32CUBE_PATH}/Drivers/CMSIS/Lib/GCC/libarm_cortexM4l_math.a
+                )
+        target_include_directories(stm32cube_dsp PUBLIC ${STM32CUBE_PATH}/Drivers/CMSIS/DSP/include)
+        target_compile_definitions(stm32cube_dsp
+                PUBLIC
+                ${MATH_TYPE}
+                PRIVATE
+                $<${HAS_FPU}:__FPU_PRESENT=1>
+#                $<${HAS_FPU}:__FPU_USED=1>
+                )
+        add_library(stm32cube::dsp ALIAS stm32cube_dsp)
+endif()
 
 
 # middlewares
