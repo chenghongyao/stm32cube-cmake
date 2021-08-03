@@ -36,6 +36,7 @@ add_library(stm32cube::cmiss ALIAS cmiss)
 add_library(stm32cube_hal)
 target_link_libraries(stm32cube_hal PUBLIC cmiss)
 aux_source_directory(${STM32CUBE_PATH}/Drivers/${MCU_FAMILY}xx_HAL_Driver/Src HAL_SOURCES)
+list(FILTER HAL_SOURCES EXCLUDE REGEX  "^.*_template.c$")
 target_sources(stm32cube_hal PRIVATE ${HAL_SOURCES})
 target_include_directories(stm32cube_hal
         PUBLIC
