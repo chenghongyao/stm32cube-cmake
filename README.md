@@ -8,13 +8,13 @@
 
 环境主要需要三个工具：STM32CubeMX，arm-none-eabi-gcc，和CMake。其中的CMake也可以直接使用IDE自带的CMake，无需下载。
 
-- `STM32CubeMX`：从[官网]([STM32CubeMX - STM32Cube初始化代码生成器 - STMicroelectronics](https://www.st.com/zh/development-tools/stm32cubemx.html))下载后安装即可；
+- `STM32CubeMX`：从[官网](https://www.st.com/zh/development-tools/stm32cubemx.html)下载后安装即可；
 
-- `arm-none-eabi-gcc`：从[官网]([GNU Toolchain | GNU Arm Embedded Toolchain Downloads – Arm Developer](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads))下载后解压到任意位置，并将解压后目录下的bin文件夹路径加入到环境变量，在终端输入`arm-none-eabi-gcc --version`检查是否成功；
+- `arm-none-eabi-gcc`：从[官网](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads)下载后解压到任意位置，并将解压后目录下的bin文件夹路径加入到环境变量，在终端输入`arm-none-eabi-gcc --version`检查是否成功；
 
-- `CMake`：如果使用IDE（推荐）也可以不安装，使用自带的插件或功能即刻（[详细]()）：
+- `CMake`：如果使用IDE（推荐）也可以不安装，使用自带的插件或功能即可：
 
-  - `Windows`：从[官网]([Download | CMake](https://cmake.org/download/))下载后安装即可。
+  - `Windows`：从[官网](https://cmake.org/download/)下载后安装即可。
 
   - `Linux`：
 
