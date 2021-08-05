@@ -118,12 +118,13 @@ make
 在工程的根CMakeLists.txt下需要先定义芯片类型变量`MCU_TYPE`（该变量可以在STM32CubeMX生成的Makefile文件中找到），然后导入`stm32cube.cmake`，
 
 ```
+set(MCU_TYPE STM32F411xE)
 include(stm32cube-cmake/stm32cube.cmake)
 ```
 
 这个文件主要是自动完成STM32CubeMX生成文件的导入，及全局编译参数的设置，这些参数有些是与硬件相关的。
 
-这个文件执行后会生成3个主要目标：`stm32cube::cmsis`，`stm32cube::hal`，`stm32cube::app`
+这个cmake文件执行后会生成3个主要目标：`stm32cube::cmsis`，`stm32cube::hal`，`stm32cube::app`
 
 - `stm32cube::cmsis`，这个文件都是头文件，当需要访问stm32硬件相关的功能（如寄存器定义等）时需要链接此目标。
 - `stm32cube::hal`：此目标包含了所有的HAL库文件，是一个静态库目标。HAL库硬件抽象的，当需要调用使用HAL库提供的API时需要链接此目标，同时在相关源文件中使用`#include "main.h"`包含库头文件
@@ -136,7 +137,7 @@ include(stm32cube-cmake/stm32cube.cmake)
 
 # `stm32cube::sys`与`stm32cube::utils`
 
-
+[TODO]
 
 
 
@@ -148,7 +149,7 @@ include(stm32cube-cmake/stm32cube.cmake)
 
 # 下载
 
-TODO
+[TODO]
 
 
 
